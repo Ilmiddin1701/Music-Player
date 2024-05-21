@@ -181,6 +181,12 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
             binding.btnPlay.visibility = View.INVISIBLE
             obj.p = position
             rvAdapter.notifyDataSetChanged()
+        } else if (!obj.mediaPlayer!!.isPlaying){
+            obj.mediaPlayer!!.start()
+            obj.musicData!!.isPlaying = 1
+            binding.btnPlay.visibility = View.INVISIBLE
+            binding.btnPause.visibility = View.VISIBLE
+            rvAdapter.notifyDataSetChanged()
         }
     }
 }
