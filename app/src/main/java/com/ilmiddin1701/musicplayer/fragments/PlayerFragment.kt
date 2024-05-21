@@ -93,6 +93,7 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
                     obj.musicData?.singer = list[obj.p!! - 1].singer
                     obj.musicData?.isPlaying = 1
                     rv.scrollToPosition(obj.p!!-2)
+                    rvAdapter.notifyItemRangeChanged(obj.p!!-1, obj.p!!)
                     btnPlay.visibility = View.INVISIBLE
                     btnPause.visibility = View.VISIBLE
                     seekBar.max = obj.mediaPlayer?.duration!!
@@ -115,13 +116,13 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
                     obj.musicData?.singer = list[obj.p!! + 1].singer
                     obj.musicData?.isPlaying = 1
                     rv.scrollToPosition(obj.p!!+2)
+                    rvAdapter.notifyItemRangeChanged(obj.p!!, obj.p!! + 1)
                     btnPlay.visibility = View.INVISIBLE
                     btnPause.visibility = View.VISIBLE
                     seekBar.max = obj.mediaPlayer?.duration!!
                     handler.postDelayed(runnable, 1000)
                     obj.p = obj.p!! + 1
                     obj.mediaPlayer!!.start()
-                    rvAdapter.notifyDataSetChanged()
                 }
             }
 
@@ -168,6 +169,7 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
 
     @SuppressLint("NotifyDataSetChanged")
     override fun itemClick(musicData: MusicData, position: Int) {
+        val list: MutableList<MusicData> = requireActivity().musicFiles()
         if (musicData.music != obj.musicData?.music) {
             obj.mediaPlayer!!.stop()
             obj.mediaPlayer = MediaPlayer.create(requireContext(), Uri.parse(musicData.music))
@@ -179,13 +181,21 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
             binding.btnPause.visibility = View.VISIBLE
             binding.btnPlay.visibility = View.INVISIBLE
             obj.p = position
-            rvAdapter.notifyDataSetChanged()
+            rvAdapter = RvAdapter(this@PlayerFragment, list)
+            binding.rv.adapter = rvAdapter
+            binding.musicImage.visibility = View.VISIBLE
+            binding.cardView.visibility = View.INVISIBLE
+            menuOrImage = false
         } else if (!obj.mediaPlayer!!.isPlaying){
             obj.mediaPlayer!!.start()
             obj.musicData!!.isPlaying = 1
             binding.btnPlay.visibility = View.INVISIBLE
             binding.btnPause.visibility = View.VISIBLE
-            rvAdapter.notifyDataSetChanged()
+            rvAdapter = RvAdapter(this@PlayerFragment, list)
+            binding.rv.adapter = rvAdapter
+            binding.musicImage.visibility = View.VISIBLE
+            binding.cardView.visibility = View.INVISIBLE
+            menuOrImage = false
         }
     }
 }
