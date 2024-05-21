@@ -39,7 +39,8 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="10dp"
-                android:src="@drawable/ic_music" />
+                android:src="@drawable/ic_music"
+                tools:ignore="ContentDescription" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -82,8 +83,8 @@
                     android:layout_toStartOf="@id/btnNext"
                     android:paddingStart="15dp"
                     android:paddingEnd="15dp"
-
-                    android:src="@drawable/ic_play" />
+                    android:src="@drawable/ic_play"
+                    tools:ignore="ContentDescription" />
 
                 <ImageView
                     android:id="@+id/btnNext"
@@ -92,7 +93,8 @@
                     android:layout_alignParentEnd="true"
                     android:paddingStart="15dp"
                     android:paddingEnd="15dp"
-                    android:src="@drawable/ic_next" />
+                    android:src="@drawable/ic_next"
+                    tools:ignore="ContentDescription" />
             </RelativeLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
