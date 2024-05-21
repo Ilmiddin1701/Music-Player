@@ -81,12 +81,23 @@
                 tools:ignore="ContentDescription" />
         </com.google.android.material.card.MaterialCardView>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardView"
             android:layout_width="match_parent"
             android:layout_height="270dp"
+            android:backgroundTint="@android:color/transparent"
+            app:strokeWidth="1dp"
             android:visibility="invisible"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            app:strokeColor="@color/white"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv"
+                android:layout_width="match_parent"
+                android:layout_height="270dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        </com.google.android.material.card.MaterialCardView>
     </FrameLayout>
 
     <TextView

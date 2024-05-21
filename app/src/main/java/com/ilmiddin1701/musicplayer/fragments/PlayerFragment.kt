@@ -40,17 +40,17 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
             btnMenu.setOnClickListener {
                 if (!menuOrImage){
                     musicImage.visibility = View.INVISIBLE
-                    rv.visibility = View.VISIBLE
+                    cardView.visibility = View.VISIBLE
                     menuOrImage = true
                 } else {
                     musicImage.visibility = View.VISIBLE
-                    rv.visibility = View.INVISIBLE
+                    cardView.visibility = View.INVISIBLE
                     menuOrImage = false
                 }
             }
             musicImage.setOnClickListener {
                 musicImage.visibility = View.INVISIBLE
-                rv.visibility = View.VISIBLE
+                cardView.visibility = View.VISIBLE
                 menuOrImage = true
             }
             rv.adapter = rvAdapter
@@ -93,13 +93,13 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
                     obj.musicData?.singer = list[obj.p!! - 1].singer
                     obj.musicData?.isPlaying = 1
                     rv.scrollToPosition(obj.p!!-2)
-                    rvAdapter.notifyItemRangeChanged(obj.p!!-1, obj.p!!)
                     btnPlay.visibility = View.INVISIBLE
                     btnPause.visibility = View.VISIBLE
                     seekBar.max = obj.mediaPlayer?.duration!!
                     handler.postDelayed(runnable, 1000)
                     obj.p = obj.p!! - 1
                     obj.mediaPlayer!!.start()
+                    rvAdapter.notifyDataSetChanged()
                 }
             }
             btnNext.setOnClickListener {
@@ -115,13 +115,13 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
                     obj.musicData?.singer = list[obj.p!! + 1].singer
                     obj.musicData?.isPlaying = 1
                     rv.scrollToPosition(obj.p!!+2)
-                    rvAdapter.notifyItemRangeChanged(obj.p!!, obj.p!!+1)
                     btnPlay.visibility = View.INVISIBLE
                     btnPause.visibility = View.VISIBLE
                     seekBar.max = obj.mediaPlayer?.duration!!
                     handler.postDelayed(runnable, 1000)
                     obj.p = obj.p!! + 1
                     obj.mediaPlayer!!.start()
+                    rvAdapter.notifyDataSetChanged()
                 }
             }
 
@@ -132,7 +132,6 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
                 btnPlay.visibility = View.VISIBLE
                 rvAdapter.notifyDataSetChanged()
             }
-
 
             seekBar.max = obj.mediaPlayer?.duration!!
             handler.postDelayed(runnable, 1000)
