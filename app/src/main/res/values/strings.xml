@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Music Player</string>
+    <string name="playing_now">PLAYING NOW</string>
+    <string name="singer_name">Noma\'lum ijrochi</string>
+    <string name="music_name">Musiqa nomi</string>
+    <string name="_00_00">00:00</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
