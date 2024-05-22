@@ -163,13 +163,11 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
             }
 
             seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener{
-                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                    if (fromUser){
-                        obj.mediaPlayer!!.seekTo(progress)
-                    }
-                }
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {}
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                    obj.mediaPlayer!!.seekTo(seekBar?.progress!!)
+                }
             })
         }
         return binding.root
@@ -199,40 +197,41 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
     @SuppressLint("NotifyDataSetChanged")
     override fun itemClick(musicData: MusicData, position: Int) {
         val list: MutableList<MusicData> = requireActivity().musicFiles()
-        if (musicData.music != obj.musicData?.music) {
-            obj.mediaPlayer!!.stop()
-            musicData.isPlaying = 1
-            obj.musicData = musicData
-            obj.mediaPlayer = MediaPlayer.create(requireContext(), Uri.parse(musicData.music))
-            obj.mediaPlayer!!.start()
-            binding.musicName.text = musicData.musicName
-            binding.singerName.text = musicData.singer
-            binding.btnPause.visibility = View.VISIBLE
-            binding.btnPlay.visibility = View.INVISIBLE
-            obj.p = position
-            binding.seekBar.max = obj.mediaPlayer?.duration!!
-            binding.tvDuration.text = millisToTime(obj.mediaPlayer!!.duration)
-            rvAdapter = RvAdapter(this@PlayerFragment, list)
-            binding.rv.adapter = rvAdapter
-            binding.musicImage.visibility = View.VISIBLE
-            binding.cardView.visibility = View.INVISIBLE
-            menuOrImage = false
-        } else if (!obj.mediaPlayer!!.isPlaying){
-            obj.mediaPlayer!!.start()
-            obj.musicData!!.isPlaying = 1
-            binding.btnPlay.visibility = View.INVISIBLE
-            binding.btnPause.visibility = View.VISIBLE
-            binding.seekBar.max = obj.mediaPlayer?.duration!!
-            binding.tvDuration.text = millisToTime(obj.mediaPlayer!!.duration)
-            rvAdapter = RvAdapter(this@PlayerFragment, list)
-            binding.rv.adapter = rvAdapter
-            binding.musicImage.visibility = View.VISIBLE
-            binding.cardView.visibility = View.INVISIBLE
-            menuOrImage = false
-        } else if (obj.mediaPlayer!!.isPlaying){
-            binding.musicImage.visibility = View.VISIBLE
-            binding.cardView.visibility = View.INVISIBLE
-            menuOrImage = false
+        binding.apply {
+            if (musicData.music != obj.musicData?.music) {
+                obj.mediaPlayer!!.stop()
+                musicData.isPlaying = 1
+                obj.musicData = musicData
+                obj.mediaPlayer = MediaPlayer.create(requireContext(), Uri.parse(musicData.music))
+                obj.mediaPlayer!!.start()
+                seekBar.max = obj.mediaPlayer?.duration!!
+                tvDuration.text = millisToTime(obj.mediaPlayer!!.duration)
+                handler.postDelayed(runnable, 1000)
+                musicName.text = musicData.musicName
+                singerName.text = musicData.singer
+                btnPause.visibility = View.VISIBLE
+                btnPlay.visibility = View.INVISIBLE
+                obj.p = position
+                rvAdapter = RvAdapter(this@PlayerFragment, list)
+                rv.adapter = rvAdapter
+                musicImage.visibility = View.VISIBLE
+                cardView.visibility = View.INVISIBLE
+                menuOrImage = false
+            } else if (!obj.mediaPlayer!!.isPlaying){
+                obj.mediaPlayer!!.start()
+                obj.musicData!!.isPlaying = 1
+                btnPlay.visibility = View.INVISIBLE
+                btnPause.visibility = View.VISIBLE
+                rvAdapter = RvAdapter(this@PlayerFragment, list)
+                rv.adapter = rvAdapter
+                musicImage.visibility = View.VISIBLE
+                cardView.visibility = View.INVISIBLE
+                menuOrImage = false
+            } else if (obj.mediaPlayer!!.isPlaying){
+                musicImage.visibility = View.VISIBLE
+                cardView.visibility = View.INVISIBLE
+                menuOrImage = false
+            }
         }
     }
 }
