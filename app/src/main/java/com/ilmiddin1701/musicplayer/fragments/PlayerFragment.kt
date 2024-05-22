@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import com.ilmiddin1701.musicplayer.R
 import com.ilmiddin1701.musicplayer.adapters.RvAdapter
@@ -25,6 +26,7 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
     lateinit var rvAdapter: RvAdapter
     lateinit var handler: Handler
     var menuOrImage = false
+    val liveData = MutableLiveData<Int>()
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -137,6 +139,29 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
             handler.postDelayed(runnable, 1000)
             tvDuration.text = millisToTime(obj.mediaPlayer!!.duration)
 
+            liveData.observe(viewLifecycleOwner){
+                if (obj.p != list.size-1) {
+                    obj.mediaPlayer!!.stop()
+                    obj.mediaPlayer = MediaPlayer.create(requireContext(), Uri.parse(list[it].music))
+                    tvDuration.text = millisToTime(obj.mediaPlayer!!.duration)
+                    musicName.text = list[it].musicName
+                    singerName.text = list[it].singer
+                    obj.musicData?.id = list[it].id
+                    obj.musicData?.music = list[it].music
+                    obj.musicData?.musicName = list[it].musicName
+                    obj.musicData?.singer = list[it].singer
+                    obj.musicData?.isPlaying = 1
+                    rv.scrollToPosition(obj.p!!+2)
+                    rvAdapter.notifyItemRangeChanged(obj.p!!, it)
+                    btnPlay.visibility = View.INVISIBLE
+                    btnPause.visibility = View.VISIBLE
+                    seekBar.max = obj.mediaPlayer?.duration!!
+                    handler.postDelayed(runnable, 1000)
+                    obj.p = it
+                    obj.mediaPlayer!!.start()
+                }
+            }
+
             seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener{
                 override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                     if (fromUser){
@@ -152,8 +177,13 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
 
     private val runnable = object : Runnable{
         override fun run() {
-            binding.tvPosition.text = millisToTime(obj.mediaPlayer!!.currentPosition)
-            binding.seekBar.progress = obj.mediaPlayer!!.currentPosition
+            binding.apply {
+                tvPosition.text = millisToTime(obj.mediaPlayer!!.currentPosition)
+                seekBar.progress = obj.mediaPlayer!!.currentPosition
+                if (tvPosition.text == tvDuration.text){
+                    liveData.postValue(obj.p!!+1)
+                }
+            }
             handler.postDelayed(this, 1000)
         }
     }
