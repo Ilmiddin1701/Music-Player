@@ -1,10 +1,7 @@
 package com.ilmiddin1701.musicplayer.fragments
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.DialogInterface
-import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
@@ -12,9 +9,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
@@ -45,11 +39,7 @@ class HomeFragment : Fragment(), RvAdapter.RvAction {
                 }
                 playerAction.setOnClickListener {
                     if (obj.musicData != null) {
-                        findNavController().navigate(
-                            R.id.playerFragment,
-                            bundleOf(),
-                            navOptions.build()
-                        )
+                        findNavController().navigate(R.id.playerFragment, bundleOf(), navOptions.build())
                     }
                 }
                 if (obj.mediaPlayer != null && obj.mediaPlayer!!.isPlaying) {
@@ -96,19 +86,17 @@ class HomeFragment : Fragment(), RvAdapter.RvAction {
             }
         }.onDeclined { e ->
             if (e.hasDenied()) {
-
                 AlertDialog.Builder(requireContext())
                     .setMessage("Please accept our permissions")
-                    .setPositiveButton("Ha") { dialog, which ->
-                        e.askAgain();
-                    } //ask again
-                    .setNegativeButton("Yo'q") { dialog, which ->
-                        dialog.dismiss();
+                    .setPositiveButton("Ha") { _, _ ->
+                        e.askAgain()
+                    }
+                    .setNegativeButton("Yo'q") { dialog, _ ->
+                        dialog.dismiss()
                     }
                     .show()
             }
             if(e.hasForeverDenied()) {
-
                 e.goToSettings()
             }
         }
@@ -120,6 +108,7 @@ class HomeFragment : Fragment(), RvAdapter.RvAction {
         navOptions.setEnterAnim(R.anim.anim)
         navOptions.setPopExitAnim(R.anim.anim2)
         if (musicData.music != obj.musicData?.music || obj.mediaPlayer == null) {
+            findNavController().navigate(R.id.playerFragment, bundleOf(), navOptions.build())
             if (obj.mediaPlayer == null) {
                 obj.mediaPlayer = MediaPlayer.create(requireContext(), Uri.parse(musicData.music))
                 obj.mediaPlayer!!.start()
@@ -135,7 +124,6 @@ class HomeFragment : Fragment(), RvAdapter.RvAction {
             obj.musicData = musicData
             obj.p = position
             binding.btnPlayPause.setImageResource(R.drawable.ic_stop)
-            findNavController().navigate(R.id.playerFragment, bundleOf(), navOptions.build())
         } else {
             findNavController().navigate(R.id.playerFragment, bundleOf(), navOptions.build())
         }

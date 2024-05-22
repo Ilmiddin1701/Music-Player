@@ -23,9 +23,9 @@ import com.ilmiddin1701.musicplayer.utils.obj.musicFiles
 
 class PlayerFragment : Fragment(), RvAdapter.RvAction {
     private val binding by lazy { FragmentPlayerBinding.inflate(layoutInflater) }
-    lateinit var rvAdapter: RvAdapter
+    private lateinit var rvAdapter: RvAdapter
     lateinit var handler: Handler
-    var menuOrImage = false
+    private var menuOrImage = false
     val liveData = MutableLiveData<Int>()
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
