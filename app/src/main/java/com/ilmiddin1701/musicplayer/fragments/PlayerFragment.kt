@@ -136,8 +136,8 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
             }
 
             seekBar.max = obj.mediaPlayer?.duration!!
-            handler.postDelayed(runnable, 1000)
             tvDuration.text = millisToTime(obj.mediaPlayer!!.duration)
+            handler.postDelayed(runnable, 1000)
 
             liveData.observe(viewLifecycleOwner){
                 if (obj.p != list.size-1) {
@@ -180,7 +180,7 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
             binding.apply {
                 tvPosition.text = millisToTime(obj.mediaPlayer!!.currentPosition)
                 seekBar.progress = obj.mediaPlayer!!.currentPosition
-                if (tvPosition.text == tvDuration.text){
+                if (millisToTime(obj.mediaPlayer!!.currentPosition) == millisToTime(obj.mediaPlayer!!.duration)){
                     liveData.postValue(obj.p!!+1)
                 }
             }
@@ -201,15 +201,17 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
         val list: MutableList<MusicData> = requireActivity().musicFiles()
         if (musicData.music != obj.musicData?.music) {
             obj.mediaPlayer!!.stop()
-            obj.mediaPlayer = MediaPlayer.create(requireContext(), Uri.parse(musicData.music))
             musicData.isPlaying = 1
             obj.musicData = musicData
+            obj.mediaPlayer = MediaPlayer.create(requireContext(), Uri.parse(musicData.music))
             obj.mediaPlayer!!.start()
             binding.musicName.text = musicData.musicName
             binding.singerName.text = musicData.singer
             binding.btnPause.visibility = View.VISIBLE
             binding.btnPlay.visibility = View.INVISIBLE
             obj.p = position
+            binding.seekBar.max = obj.mediaPlayer?.duration!!
+            binding.tvDuration.text = millisToTime(obj.mediaPlayer!!.duration)
             rvAdapter = RvAdapter(this@PlayerFragment, list)
             binding.rv.adapter = rvAdapter
             binding.musicImage.visibility = View.VISIBLE
@@ -220,8 +222,14 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
             obj.musicData!!.isPlaying = 1
             binding.btnPlay.visibility = View.INVISIBLE
             binding.btnPause.visibility = View.VISIBLE
+            binding.seekBar.max = obj.mediaPlayer?.duration!!
+            binding.tvDuration.text = millisToTime(obj.mediaPlayer!!.duration)
             rvAdapter = RvAdapter(this@PlayerFragment, list)
             binding.rv.adapter = rvAdapter
+            binding.musicImage.visibility = View.VISIBLE
+            binding.cardView.visibility = View.INVISIBLE
+            menuOrImage = false
+        } else if (obj.mediaPlayer!!.isPlaying){
             binding.musicImage.visibility = View.VISIBLE
             binding.cardView.visibility = View.INVISIBLE
             menuOrImage = false
