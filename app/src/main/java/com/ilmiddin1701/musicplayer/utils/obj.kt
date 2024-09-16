@@ -28,23 +28,20 @@ object obj {
             null,
             sortOrder
         )
-        if (cursor != null && cursor.moveToFirst()) {
-            val id: Int = cursor.getColumnIndex(MediaStore.Audio.Media._ID)
-            val title: Int = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)
-            val imageId: Int = cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART)
-            val authorId: Int = cursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST)
-            do {
-                val musicId: Long = cursor.getLong(id)
-                val musicName: String = cursor.getString(title)
-                var musicImage = ""
-                if (imageId != -1) {
-                    musicImage = cursor.getString(imageId)
-                }
-                val music: String = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
-                val singer = cursor.getString(authorId)
+        cursor?.use {
+            val id = it.getColumnIndex(MediaStore.Audio.Media._ID)
+            val title = it.getColumnIndex(MediaStore.Audio.Media.TITLE)
+            val artist = it.getColumnIndex(MediaStore.Audio.Media.ARTIST)
+            val data = it.getColumnIndex(MediaStore.Audio.Media.DATA)
 
-                list.add(MusicData(musicId, musicName, musicImage, music, singer, 0))
-            } while (cursor.moveToNext())
+            while (it.moveToNext()) {
+                val musicId: Long = it.getLong(id)
+                val musicName: String = it.getString(title)
+                val singer: String = it.getString(artist)
+                val music: String = it.getString(data)
+
+                list.add(MusicData(musicId, musicName, "", music, singer, 0))
+            }
         }
         return list
     }

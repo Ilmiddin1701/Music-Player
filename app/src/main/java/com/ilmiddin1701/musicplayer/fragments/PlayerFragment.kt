@@ -25,6 +25,7 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
     private val binding by lazy { FragmentPlayerBinding.inflate(layoutInflater) }
     private lateinit var rvAdapter: RvAdapter
     lateinit var handler: Handler
+    private lateinit var list: MutableList<MusicData>
     private var menuOrImage = false
     val liveData = MutableLiveData<Int>()
     @SuppressLint("NotifyDataSetChanged")
@@ -32,12 +33,16 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val list: MutableList<MusicData> = requireActivity().musicFiles()
+        binding.apply {
+            musicName.isSelected = true
+            singerName.isSelected = true
+            musicName.text = obj.musicData?.musicName
+            singerName.text = obj.musicData?.singer
+        }
+        list = requireActivity().musicFiles()
         rvAdapter = RvAdapter(this@PlayerFragment, list)
         handler = Handler(Looper.getMainLooper())
         binding.apply {
-            musicName.text = obj.musicData?.musicName
-            singerName.text = obj.musicData?.singer
             btnMenu.setOnClickListener {
                 if (!menuOrImage){
                     musicImage.visibility = View.INVISIBLE
@@ -67,20 +72,18 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
                 btnPlay.visibility = View.VISIBLE
                 btnPause.visibility = View.INVISIBLE
             }
-            musicName.text = obj.musicData!!.musicName
-            singerName.text = obj.musicData!!.singer
             btnPopBakStake.setOnClickListener {
                 findNavController().popBackStack()
             }
-
             btnPlay.setOnClickListener {
                 obj.musicData?.isPlaying = 1
                 obj.mediaPlayer!!.start()
+                musicName.isSelected = true
+                singerName.isSelected = true
                 btnPlay.visibility = View.INVISIBLE
                 btnPause.visibility = View.VISIBLE
                 rvAdapter.notifyItemChanged(obj.p!!)
             }
-
             btnBack.setOnClickListener {
                 if (obj.p != 0) {
                     obj.mediaPlayer!!.stop()
@@ -126,10 +129,11 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
                     obj.mediaPlayer!!.start()
                 }
             }
-
             btnPause.setOnClickListener {
                 obj.musicData?.isPlaying = 2
                 obj.mediaPlayer!!.pause()
+                musicName.isSelected = false
+                singerName.isSelected = false
                 btnPause.visibility = View.INVISIBLE
                 btnPlay.visibility = View.VISIBLE
                 rvAdapter.notifyDataSetChanged()
@@ -144,8 +148,6 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
                     obj.mediaPlayer!!.stop()
                     obj.mediaPlayer = MediaPlayer.create(requireContext(), Uri.parse(list[it].music))
                     tvDuration.text = millisToTime(obj.mediaPlayer!!.duration)
-                    musicName.text = list[it].musicName
-                    singerName.text = list[it].singer
                     obj.musicData?.id = list[it].id
                     obj.musicData?.music = list[it].music
                     obj.musicData?.musicName = list[it].musicName
@@ -186,17 +188,20 @@ class PlayerFragment : Fragment(), RvAdapter.RvAction {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     fun millisToTime(millis: Int): String {
         val time = millis / 1000
         val hour = time / 3600
         val minute = (time % 3600) / 60
         val second2 = (time % 3600) % 60
-        return "$hour:$minute:$second2"
+        return if (hour != 0) {
+            String.format("%02d:%02d:%02d", hour, minute, second2)
+        } else {
+            String.format("%02d:%02d", minute, second2)
+        }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun itemClick(musicData: MusicData, position: Int) {
-        val list: MutableList<MusicData> = requireActivity().musicFiles()
         binding.apply {
             if (musicData.music != obj.musicData?.music) {
                 obj.mediaPlayer!!.stop()
